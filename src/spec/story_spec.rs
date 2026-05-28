@@ -40,7 +40,7 @@ const AENEID_NODES: &[&str] = &[
     "enode://a7e893eb4b07bd9b0c0659730c066564dff0f5fa98c08a7df9f380b84e64fbea16165ee5cce6c3414d64bea8cacc1ac200540c50607a7bf170b9d5504f81bbf8@b1-b.odyssey-devnet.storyrpc.io:30303",
 ];
 
-/// Story chain spec type.
+/// Story chain specification.
 #[derive(Debug, Clone, Default, Deref, Into, PartialEq, Eq)]
 pub struct StoryChainSpec {
     #[deref]
@@ -49,7 +49,7 @@ pub struct StoryChainSpec {
 
 impl EthChainSpec for StoryChainSpec {
     type Header = alloy_consensus::Header;
-    
+
     fn chain(&self) -> reth_chainspec::Chain {
         self.inner.chain()
     }
@@ -115,7 +115,7 @@ impl Hardforks for StoryChainSpec {
     ) -> impl Iterator<Item = (&dyn Hardfork, ForkCondition)> {
         self.inner.forks_iter()
     }
-    
+
     fn fork_id(&self, head: &Head) -> ForkId {
         self.inner.fork_id(head)
     }
@@ -154,7 +154,7 @@ impl From<Genesis> for StoryChainSpec {
     }
 }
 
-/// Chain specification parser.
+/// Parser for Story chain specifications.
 #[derive(Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct StoryChainSpecParser;
@@ -167,16 +167,13 @@ impl ChainSpecParser for StoryChainSpecParser {
     fn default_value() -> Option<&'static str> {
         Some("story")
     }
-    
+
     fn parse(s: &str) -> eyre::Result<Arc<Self::ChainSpec>> {
         chain_value_parser(s)
     }
 }
 
-/// Clap value parser for [`StoryChainSpec`]s.
-///
-/// The value parser matches either a known chain, the path
-/// to a json file, or a json formatted string in-memory. The json needs to be a Genesis struct.
+/// Parses a built-in chain name, genesis JSON file path, or in-memory genesis JSON string.
 pub fn chain_value_parser(s: &str) -> eyre::Result<Arc<StoryChainSpec>, eyre::Error> {
     Ok(match s {
         "aeneid" => Arc::new(StoryChainSpec::from(AENEID_GENESIS.clone())),
