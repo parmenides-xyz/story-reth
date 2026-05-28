@@ -1,2 +1,2 @@
-pub mod chainspec;
+pub mod spec;
 pub mod version;
